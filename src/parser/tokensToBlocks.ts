@@ -3,7 +3,7 @@ import type { Block, Inline } from "../types/block.js";
 import { slugify } from "../slug/slugify.js";
 
 // Copied verbatim (logic unchanged) from
-// learning-hub-backend/src/utils/markdownTransformer.ts, typed against this
+// cachiva-backend/src/utils/markdownTransformer.ts, typed against this
 // package's Block/Inline shapes (types/block.ts) instead of the backend's
 // original loose `unknown[]`/`any[]`.
 

@@ -4,7 +4,7 @@ import { SUPPORTED_BLOCKS } from "./supportedBlocks.js";
 import { AI_PROMPT } from "../prompts/aiPrompt.js";
 import { RESTRUCTURE_PROMPT } from "../prompts/restructurePrompt.js";
 
-// Re-composed from learning-hub-backend/src/constants/noteFormat.ts's
+// Re-composed from cachiva-backend/src/constants/noteFormat.ts's
 // `guide` object — same shape and content, just built from the smaller
 // pieces above instead of one flat file. This is what GET /api/note-format
 // returns today; the backend keeps returning its own copy for now (Phase 1

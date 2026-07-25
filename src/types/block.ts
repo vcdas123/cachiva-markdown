@@ -1,4 +1,4 @@
-// Mirrors learning-hub-frontend/src/interfaces/renderer.type.ts's Inline/
+// Mirrors cachiva-frontend/src/interfaces/renderer.type.ts's Inline/
 // Block shapes, minus that file's KEYS-indirection layer (app.constants.ts)
 // — the underlying field names are already plain lowercase strings (verified
 // against INLINE_KEYS/BLOCK_KEYS), so this package exposes them directly.

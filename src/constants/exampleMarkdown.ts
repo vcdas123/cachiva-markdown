@@ -1,4 +1,4 @@
-// Copied verbatim from learning-hub-backend/src/constants/noteFormat.ts —
+// Copied verbatim from cachiva-backend/src/constants/noteFormat.ts —
 // the reference example embedded in the format guide and both AI prompts.
 export const EXAMPLE_MARKDOWN = `# Docker Images
 

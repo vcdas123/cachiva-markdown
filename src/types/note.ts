@@ -4,7 +4,7 @@ import type { TocEntry } from "./toc.js";
 
 // The generic parsed-note shape shared conceptually by the backend's
 // markdownTransformer.ts output and the frontend's NoteDetail
-// (learning-hub-frontend/src/interfaces/note.type.ts) — the app-specific
+// (cachiva-frontend/src/interfaces/note.type.ts) — the app-specific
 // fields on NoteDetail (slug, owner, bookmark counts, etc.) are NOT part of
 // this package; this is only the Markdown-derived content shape.
 export type ParsedNote = {
@@ -14,7 +14,7 @@ export type ParsedNote = {
   toc: TocEntry[];
 };
 
-// Mirrors learning-hub-frontend/src/interfaces/guide.type.ts's
+// Mirrors cachiva-frontend/src/interfaces/guide.type.ts's
 // NoteFormatGuide — the shape of NOTE_FORMAT_GUIDE (../constants/noteFormat)
 // and of the GET /api/note-format response.
 export type NoteFormatGuide = {

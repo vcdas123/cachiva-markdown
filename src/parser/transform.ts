@@ -5,7 +5,7 @@ import { tokensToBlocks } from "./tokensToBlocks.js";
 import { groupSections } from "./sectionBuilder.js";
 import { buildToc } from "./tocBuilder.js";
 
-// Copied verbatim from learning-hub-backend/src/utils/markdownTransformer.ts
+// Copied verbatim from cachiva-backend/src/utils/markdownTransformer.ts
 // (transformMarkdownTokens), returning this package's ParsedNote type
 // instead of the backend's original loosely-typed LearningHubParsedMarkdown.
 export function transformMarkdownTokens(tokens: MarkdownToken[]): ParsedNote {

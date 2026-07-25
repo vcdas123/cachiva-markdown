@@ -1,6 +1,6 @@
 import MarkdownIt from "markdown-it";
 
-// Copied verbatim from learning-hub-backend/src/utils/markdownParser.ts —
+// Copied verbatim from cachiva-backend/src/utils/markdownParser.ts —
 // Phase 2 of the shared Markdown package migration. This exact config/
 // comments must not change behavior for either app; see the Phase 1/2 plans
 // at the learning-hub workspace root.
