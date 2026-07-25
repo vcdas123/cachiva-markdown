@@ -2,7 +2,7 @@ import { type MarkdownToken, parseMarkdownSource } from "../parser/markdownIt.js
 import type { MarkdownValidationResult } from "../types/diagnostic.js";
 import { CODE_FENCE_ERROR } from "../constants/authoringRules.js";
 
-// Copied verbatim from learning-hub-backend/src/utils/markdownValidator.ts —
+// Copied verbatim from cachiva-backend/src/utils/markdownValidator.ts —
 // Phase 3 of the shared Markdown package migration. `tokens` is accepted for
 // API-compatibility with the original signature but unused (same as the
 // original, which took it as `_tokens`) — every check runs against the raw/

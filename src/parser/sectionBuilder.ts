@@ -1,7 +1,7 @@
 import type { Block } from "../types/block.js";
 import type { Section } from "../types/section.js";
 
-// Copied verbatim from learning-hub-backend/src/utils/markdownTransformer.ts
+// Copied verbatim from cachiva-backend/src/utils/markdownTransformer.ts
 // (groupSections), typed against Block/Section instead of any[].
 export function groupSections(blocks: Block[], level: number): Section[] {
   const sections: Section[] = [];

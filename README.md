@@ -1,8 +1,8 @@
 # @learning-hub/markdown
 
-Shared Markdown package for [Learning Hub](https://github.com/vcdas123) — the single source of truth for Markdown-related constants, prompts, slug helpers, parsing, validation, formatting, and types used by both `learning-hub-frontend` and `learning-hub-backend`.
+Shared Markdown engine for [Cachiva](https://github.com/vcdas123) — the single source of truth for Markdown constants, prompts, slug helpers, parsing, validation, formatting, and types used by `cachiva-frontend` and `cachiva-backend`.
 
-> Note: `package.json`'s `description` field still says "Phase 1: foundation only — no parser/validator logic yet." That's stale — the source has moved well past that; parser, validator, and formatter logic all exist and are in active use by both apps today (see below).
+The repository is named `cachiva-markdown`. The published/imported package name remains `@learning-hub/markdown` for compatibility with the existing application contract.
 
 ## Purpose
 
@@ -11,13 +11,13 @@ Without a shared package, the format guide, prompt templates, slug/anchor-id gen
 ## Architecture
 
 ```txt
-learning-hub-frontend
+cachiva-frontend
         │
         ▼
 @learning-hub/markdown
         ▲
         │
-learning-hub-backend
+cachiva-backend
 ```
 
 Both apps depend on this package (as a GitHub dependency, see Install below) and import from it.
@@ -28,13 +28,13 @@ Everything below is re-exported from the package root (`src/index.ts`) and impor
 
 - **`constants/`** — `NOTE_FORMAT_GUIDE` (the composed note-format guide object: version, summary, rules, structure, supported blocks, example note, and both prompts), `MARKDOWN_RULES`, `SUPPORTED_BLOCKS` (+ `SupportedBlockType`), `EXAMPLE_MARKDOWN` (the reference example note), and the authoring-rule strings `MARKDOWN_VALIDATION_NOTICE` / `CODE_FENCE_RULE` / `CODE_FENCE_ERROR`.
 - **`prompts/`** — `AI_PROMPT` (the "generate a note" prompt template) and `RESTRUCTURE_PROMPT` (the "restructure an existing note" prompt template).
-- **`slug/`** — `slugify(text)`, the pure string-transform used for both URL slugs and heading-anchor ids. Note/module slug *generation* (DB-counter/crypto/time dependent) stays in `learning-hub-backend`.
+- **`slug/`** — `slugify(text)`, the pure string-transform used for both URL slugs and heading-anchor ids. Note/module slug *generation* (DB-counter/crypto/time dependent) stays in `cachiva-backend`.
 - **`types/`** — `Block`, `Section`, `TocEntry`, `ParsedNote`, and `MarkdownValidationResult`.
 - **`parser/`** — `markdownIt` (the configured `markdown-it` instance), `parseMarkdownSource`, `stripBoilerplate`, `tokensToBlocks`, `groupSections`, `buildToc`, and the top-level orchestrator `transformMarkdownTokens(tokens): ParsedNote`.
 - **`validator/`** — `validateMarkdownSource(raw, cleaned, tokens)`, the convenience wrapper `validateMarkdown(raw): MarkdownValidationResult` for callers with only raw text (used by the frontend's realtime validation), and `getMarkdownDiagnostics(raw): MarkdownDiagnosticItem[]` — a line-aware companion returning `{ message, severity, line }` items, used to anchor inline editor diagnostics at the correct line instead of defaulting to line 1.
 - **`formatter/`** — `formatMarkdown(raw)`, a whitespace/blank-line normalizer (blank line before/after headings and fenced code blocks, collapsed blank-line runs, trimmed trailing whitespace, exactly one trailing newline; fence-aware and idempotent). It never touches note content, only formatting conventions — used by the frontend's "Auto Fix" editor button.
 
-Notes must be complete Markdown (`.md`) documents that follow every rule in `MARKDOWN_RULES` — Learning Hub rejects invalid notes. Every fenced code block must declare its language (` ```sql`, ` ```python`, etc., or ` ```text` if none applies); a bare fenced code block is a blocking validation error.
+Notes must be complete Markdown (`.md`) documents that follow every rule in `MARKDOWN_RULES` — Cachiva rejects invalid notes. Every fenced code block must declare its language (` ```sql`, ` ```python`, etc., or ` ```text` if none applies); a bare fenced code block is a blocking validation error.
 
 Tests live in `tests/` (`smoke`, `parser`, `validator`, `formatter`, `getMarkdownDiagnostics`, `stripBoilerplate`) and assert against the reference `EXAMPLE_MARKDOWN` note to catch drift.
 
@@ -51,10 +51,10 @@ Runtime dependency: `markdown-it`. Dev dependencies: `typescript`, `@types/node`
 
 ## Install / consumption
 
-Both `learning-hub-frontend` and `learning-hub-backend` depend on this package straight from GitHub — not a local workspace or `file:` path:
+Both `cachiva-frontend` and `cachiva-backend` depend on this package straight from GitHub — not a local workspace or `file:` path:
 
 ```json
-"@learning-hub/markdown": "github:vcdas123/learning-hub-markdown"
+"@learning-hub/markdown": "github:vcdas123/cachiva-markdown"
 ```
 
 `npm install` in either app clones this repo, then runs its `prepare` script (`npm run build`) so `dist/` is generated on install. The package is ESM-only (`"type": "module"`); consumers resolve it through the `exports` field to `dist/src/index.js` / `dist/src/index.d.ts`.

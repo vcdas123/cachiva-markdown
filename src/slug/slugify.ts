@@ -1,4 +1,4 @@
-// Copied verbatim from learning-hub-backend/src/utils/slug.ts. This single
+// Copied verbatim from cachiva-backend/src/utils/slug.ts. This single
 // function is dual-purpose in the backend today: URL slug generation (notes/
 // modules) AND heading-anchor id generation for table-of-contents/section
 // ids. `generateNoteSlug`/`generateModuleSlug` (DB-counter + crypto/time
