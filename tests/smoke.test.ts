@@ -22,8 +22,8 @@ test("SUPPORTED_BLOCKS is the expected static list", () => {
   ]);
 });
 
-test("MARKDOWN_RULES has the mandatory output contract and 7 format rules", () => {
-  assert.equal(MARKDOWN_RULES.length, 8);
+test("MARKDOWN_RULES has the mandatory output contract and 8 format rules", () => {
+  assert.equal(MARKDOWN_RULES.length, 9);
   assert.equal(MARKDOWN_RULES[0], MARKDOWN_VALIDATION_NOTICE);
 });
 

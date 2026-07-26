@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { CODE_FENCE_ERROR, validateMarkdown, validateMarkdownSource, EXAMPLE_MARKDOWN } from "../src/index.js";
+import { CODE_FENCE_ERROR, PREAMBLE_ERROR, validateMarkdown, validateMarkdownSource, EXAMPLE_MARKDOWN } from "../src/index.js";
 
 test("the reference example note is valid with no errors/warnings", () => {
   const result = validateMarkdown(EXAMPLE_MARKDOWN);
@@ -23,18 +23,18 @@ test("missing title heading and missing section heading are both flagged", () =>
 });
 
 test("multiple level-1 headings are rejected", () => {
-  const result = validateMarkdown("# Title\n\n## Section\n\ncontent\n\n# Another Title\n\nmore content\n");
+  const result = validateMarkdown("# Title\n\nA short overview.\n\n## Section\n\ncontent\n\n# Another Title\n\nmore content\n");
   assert.equal(result.ok, false);
   assert.ok(result.errors.includes("Only one level-1 title heading is allowed. Use ##, ###, or #### for sections inside the note."));
 });
 
 test("hash headings inside fenced code blocks do not count as extra level-1 headings", () => {
-  const result = validateMarkdown("# Title\n\n## Section\n\n```md\n# Example inside code\n```\n");
+  const result = validateMarkdown("# Title\n\nA short overview.\n\n## Section\n\n```md\n# Example inside code\n```\n");
   assert.equal(result.ok, true);
 });
 
 test("a fenced code block with no language is an error", () => {
-  const raw = "# Title\n\n## Section\n\n```\nno language\n```\n";
+  const raw = "# Title\n\nA short overview.\n\n## Section\n\n```\nno language\n```\n";
   const result = validateMarkdown(raw);
   assert.equal(result.ok, false);
   assert.ok(result.errors.includes(CODE_FENCE_ERROR));
@@ -42,8 +42,14 @@ test("a fenced code block with no language is an error", () => {
 });
 
 test("a manual Table of Contents / Navigation section is a warning", () => {
-  const raw = "# Title\n\n## Table of Contents\n\n- link\n\n## Section\n\ntext\n\n## Navigation\n\n[Next]\n";
+  const raw = "# Title\n\nA short overview.\n\n## Table of Contents\n\n- link\n\n## Section\n\ntext\n\n## Navigation\n\n[Next]\n";
   const result = validateMarkdownSource(raw, raw, []);
   assert.ok(result.warnings.some((w) => w.includes("Table of Contents")));
   assert.ok(result.warnings.some((w) => w.includes("Navigation")));
+});
+
+test("a preamble paragraph between the title and first section is required", () => {
+  const result = validateMarkdown("# Title\n\n## Section\n\nContent.\n");
+  assert.equal(result.ok, false);
+  assert.ok(result.errors.includes(PREAMBLE_ERROR));
 });

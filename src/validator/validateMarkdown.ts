@@ -1,6 +1,6 @@
 import { type MarkdownToken, parseMarkdownSource } from "../parser/markdownIt.js";
 import type { MarkdownValidationResult } from "../types/diagnostic.js";
-import { CODE_FENCE_ERROR } from "../constants/authoringRules.js";
+import { CODE_FENCE_ERROR, PREAMBLE_ERROR } from "../constants/authoringRules.js";
 
 // Copied verbatim from cachiva-backend/src/utils/markdownValidator.ts —
 // Phase 3 of the shared Markdown package migration. `tokens` is accepted for
@@ -29,6 +29,18 @@ export function validateMarkdownSource(
 
   if (!/^##\s+\S/m.test(cleaned)) {
     errors.push("Must contain at least one section heading, e.g. '## Section Title'.");
+  }
+
+  const titleCloseIndex = _tokens.findIndex((token) => token.type === "heading_close" && token.tag === "h1");
+  const firstSectionIndex = _tokens.findIndex(
+    (token, index) => index > titleCloseIndex && token.type === "heading_open" && token.tag === "h2",
+  );
+  const hasPreambleParagraph = _tokens
+    .slice(titleCloseIndex + 1, firstSectionIndex)
+    .some((token) => token.type === "paragraph_open");
+
+  if (titleCloseIndex >= 0 && firstSectionIndex > titleCloseIndex && !hasPreambleParagraph) {
+    errors.push(PREAMBLE_ERROR);
   }
 
   let inFence = false;

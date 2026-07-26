@@ -16,7 +16,7 @@ export const NOTE_FORMAT_GUIDE = {
   rules: MARKDOWN_RULES,
   structure: {
     title: "# Title           (level-1 heading, exactly one, on the first line)",
-    preamble: "Optional text right after the title (before the first '## ')",
+    preamble: "Required overview paragraph after the title (before the first '## ')",
     section: "## Section Title (level-2 heading -> appears in navigation)",
     subsection: "### Subsection Title (level-3 heading)",
     code: "```<language>\n ...code... \n```",
