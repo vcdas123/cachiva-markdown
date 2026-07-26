@@ -9,7 +9,7 @@ ${MARKDOWN_VALIDATION_NOTICE}
 FORMAT RULES:
 1. The first line is the title as the ONLY level-1 heading: \`# Title\`. The note will not have more than 1 H1.
 2. Do NOT use another \`# \` heading anywhere else in the note. Use \`##\`, \`###\`, or \`####\` for all note content sections.
-3. You may add a short intro paragraph after the title (before any \`##\`).
+3. Add a concise, meaningful preamble paragraph after the title and before the first \`##\`. This is required and becomes the note description.
 4. Use \`## \` for each major section (these become the navigation menu).
 5. Use \`### \` or deeper headings for subsections inside a section.
 6. ${CODE_FENCE_RULE}

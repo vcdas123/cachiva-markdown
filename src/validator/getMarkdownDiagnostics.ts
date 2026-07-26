@@ -1,4 +1,5 @@
-import { CODE_FENCE_ERROR } from "../constants/authoringRules.js";
+import { CODE_FENCE_ERROR, PREAMBLE_ERROR } from "../constants/authoringRules.js";
+import { parseMarkdownSource } from "../parser/markdownIt.js";
 
 export interface MarkdownDiagnosticItem {
   message: string;
@@ -53,6 +54,23 @@ export function getMarkdownDiagnostics(raw: string): MarkdownDiagnosticItem[] {
       // No single line "owns" this omission — anchor to the title line
       // (or line 1) rather than an arbitrary unrelated line.
       line: (firstNonEmptyIdx >= 0 ? firstNonEmptyIdx : 0) + 1,
+    });
+  }
+
+  const tokens = parseMarkdownSource(raw).tokens;
+  const titleCloseIndex = tokens.findIndex((token) => token.type === "heading_close" && token.tag === "h1");
+  const firstSectionTokenIndex = tokens.findIndex(
+    (token, index) => index > titleCloseIndex && token.type === "heading_open" && token.tag === "h2",
+  );
+  const hasPreambleParagraph = tokens
+    .slice(titleCloseIndex + 1, firstSectionTokenIndex)
+    .some((token) => token.type === "paragraph_open");
+
+  if (titleCloseIndex >= 0 && firstSectionTokenIndex > titleCloseIndex && !hasPreambleParagraph) {
+    diagnostics.push({
+      message: PREAMBLE_ERROR,
+      severity: "error",
+      line: sectionLineIdx >= 0 ? sectionLineIdx + 1 : (firstNonEmptyIdx >= 0 ? firstNonEmptyIdx : 0) + 1,
     });
   }
 
