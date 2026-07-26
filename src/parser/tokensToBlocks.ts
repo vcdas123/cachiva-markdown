@@ -1,6 +1,6 @@
 import type { MarkdownToken } from "./markdownIt.js";
 import type { Block, Inline } from "../types/block.js";
-import { slugify } from "../slug/slugify.js";
+import { createAnchorId } from "../anchor/createAnchorId.js";
 
 // Copied verbatim (logic unchanged) from
 // cachiva-backend/src/utils/markdownTransformer.ts, typed against this
@@ -162,7 +162,7 @@ export function tokensToBlocks(tokens: MarkdownToken[]): Block[] {
       blocks.push({
         type: "heading",
         level,
-        id: slugify(text),
+        id: createAnchorId(text),
         text,
         inline: convertInline(inlineToken.children || []),
       });

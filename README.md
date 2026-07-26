@@ -1,12 +1,12 @@
 # @learning-hub/markdown
 
-Shared Markdown engine for [Cachiva](https://github.com/vcdas123) — the single source of truth for Markdown constants, prompts, slug helpers, parsing, validation, formatting, and types used by `cachiva-frontend` and `cachiva-backend`.
+Shared Markdown engine for [Cachiva](https://github.com/vcdas123) — the single source of truth for Markdown constants, prompts, heading anchors, parsing, validation, formatting, and types used by `cachiva-frontend` and `cachiva-backend`.
 
 The repository is named `cachiva-markdown`. The published/imported package name remains `@learning-hub/markdown` for compatibility with the existing application contract.
 
 ## Purpose
 
-Without a shared package, the format guide, prompt templates, slug/anchor-id generation, parsing/validation logic, and shared type shapes can silently drift between the frontend and backend. This package exists so both apps consume the same implementation instead of maintaining parallel copies.
+Without a shared package, the format guide, prompt templates, heading-anchor generation, parsing/validation logic, and shared type shapes can silently drift between the frontend and backend. This package exists so both apps consume the same implementation instead of maintaining parallel copies.
 
 ## Architecture
 
@@ -28,7 +28,7 @@ Everything below is re-exported from the package root (`src/index.ts`) and impor
 
 - **`constants/`** — `NOTE_FORMAT_GUIDE` (the composed note-format guide object: version, summary, rules, structure, supported blocks, example note, and both prompts), `MARKDOWN_RULES`, `SUPPORTED_BLOCKS` (+ `SupportedBlockType`), `EXAMPLE_MARKDOWN` (the reference example note), and the authoring-rule strings `MARKDOWN_VALIDATION_NOTICE` / `CODE_FENCE_RULE` / `CODE_FENCE_ERROR`.
 - **`prompts/`** — `AI_PROMPT` (the "generate a note" prompt template) and `RESTRUCTURE_PROMPT` (the "restructure an existing note" prompt template).
-- **`slug/`** — `slugify(text)`, the pure string-transform used for both URL slugs and heading-anchor ids. Note/module slug *generation* (DB-counter/crypto/time dependent) stays in `cachiva-backend`.
+- **`anchor/`** — `createAnchorId(text)`, the deterministic transform used only for in-document heading anchors.
 - **`types/`** — `Block`, `Section`, `TocEntry`, `ParsedNote`, and `MarkdownValidationResult`.
 - **`parser/`** — `markdownIt` (the configured `markdown-it` instance), `parseMarkdownSource`, `stripBoilerplate`, `tokensToBlocks`, `groupSections`, `buildToc`, and the top-level orchestrator `transformMarkdownTokens(tokens): ParsedNote`.
 - **`validator/`** — `validateMarkdownSource(raw, cleaned, tokens)`, the convenience wrapper `validateMarkdown(raw): MarkdownValidationResult` for callers with only raw text (used by the frontend's realtime validation), and `getMarkdownDiagnostics(raw): MarkdownDiagnosticItem[]` — a line-aware companion returning `{ message, severity, line }` items, used to anchor inline editor diagnostics at the correct line instead of defaulting to line 1.
@@ -65,7 +65,7 @@ Both `cachiva-frontend` and `cachiva-backend` depend on this package straight fr
 import {
   NOTE_FORMAT_GUIDE,
   SUPPORTED_BLOCKS,
-  slugify,
+  createAnchorId,
   validateMarkdown,
   formatMarkdown,
   parseMarkdownSource,
@@ -76,5 +76,5 @@ const { tokens } = parseMarkdownSource(rawMarkdown);
 const parsedNote = transformMarkdownTokens(tokens);
 const { ok, errors, warnings } = validateMarkdown(rawMarkdown);
 const formatted = formatMarkdown(rawMarkdown);
-const slug = slugify("My Note Title"); // "my-note-title"
+const anchorId = createAnchorId("My Note Title"); // "my-note-title"
 ```

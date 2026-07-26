@@ -6,7 +6,7 @@ import {
   SUPPORTED_BLOCKS,
   MARKDOWN_RULES,
   NOTE_FORMAT_GUIDE,
-  slugify,
+  createAnchorId,
 } from "../src/index.js";
 
 test("SUPPORTED_BLOCKS is the expected static list", () => {
@@ -41,8 +41,8 @@ test("both AI prompts require typed code fences and define the text fallback", (
   }
 });
 
-test("slugify lowercases, strips punctuation, and hyphenates", () => {
-  assert.equal(slugify("Docker Images!"), "docker-images");
-  assert.equal(slugify("  Multiple   Spaces  "), "multiple-spaces");
-  assert.equal(slugify("1.1 Image vs Container"), "11-image-vs-container");
+test("createAnchorId lowercases, strips punctuation, and hyphenates", () => {
+  assert.equal(createAnchorId("Docker Images!"), "docker-images");
+  assert.equal(createAnchorId("  Multiple   Spaces  "), "multiple-spaces");
+  assert.equal(createAnchorId("1.1 Image vs Container"), "11-image-vs-container");
 });
