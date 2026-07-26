@@ -5,7 +5,7 @@ import type { TocEntry } from "./toc.js";
 // The generic parsed-note shape shared conceptually by the backend's
 // markdownTransformer.ts output and the frontend's NoteDetail
 // (cachiva-frontend/src/interfaces/note.type.ts) — the app-specific
-// fields on NoteDetail (slug, owner, bookmark counts, etc.) are NOT part of
+// fields on NoteDetail (entity IDs, owner, bookmark counts, etc.) are NOT part of
 // this package; this is only the Markdown-derived content shape.
 export type ParsedNote = {
   title: string | null;
