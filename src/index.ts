@@ -10,3 +10,6 @@ export * from "./parser/index.js";
 export * from "./validator/index.js";
 // Phase 5: formatter.
 export * from "./formatter/index.js";
+// Internal Cachiva references (`cachiva://module/<id>`, `cachiva://note/<id>`),
+// shared by the backend's write-path validation and the frontend's renderer.
+export * from "./references/index.js";
