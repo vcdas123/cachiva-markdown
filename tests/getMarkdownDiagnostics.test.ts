@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { CODE_FENCE_ERROR, PREAMBLE_ERROR, getMarkdownDiagnostics, EXAMPLE_MARKDOWN } from "../src/index.js";
+import { CODE_FENCE_ERROR, HEADING_DEPTH_ERROR, PREAMBLE_ERROR, getMarkdownDiagnostics, EXAMPLE_MARKDOWN } from "../src/index.js";
 
 test("the reference example note has no diagnostics", () => {
   assert.deepEqual(getMarkdownDiagnostics(EXAMPLE_MARKDOWN), []);
@@ -41,6 +41,13 @@ test("extra level-1 headings are anchored to the extra heading lines", () => {
 test("level-1-looking text inside fenced code has no diagnostic", () => {
   const raw = "# Title\n\nA short overview.\n\n## Section\n\n```md\n# Example inside code\n```\n";
   assert.deepEqual(getMarkdownDiagnostics(raw), []);
+});
+
+test("anchors an overdeep heading error to the invalid heading", () => {
+  const raw = "# Title\n\nA short overview.\n\n## Section\n\n####### Too deep\n";
+  assert.deepEqual(getMarkdownDiagnostics(raw).filter((item) => item.message === HEADING_DEPTH_ERROR), [
+    { message: HEADING_DEPTH_ERROR, severity: "error", line: 7 },
+  ]);
 });
 
 test("anchors a missing preamble error to the first section", () => {

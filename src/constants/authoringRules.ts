@@ -9,3 +9,6 @@ export const CODE_FENCE_ERROR =
 
 export const PREAMBLE_ERROR =
   "A preamble paragraph is required between the level-1 title and the first level-2 section. Add a concise overview of what the note covers.";
+
+export const HEADING_DEPTH_ERROR =
+  "Headings support levels 1 through 6 only. Replace headings with seven or more '#' characters with a level-6 heading or plain text.";
