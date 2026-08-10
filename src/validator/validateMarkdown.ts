@@ -1,6 +1,6 @@
 import { type MarkdownToken, parseMarkdownSource } from "../parser/markdownIt.js";
 import type { MarkdownValidationResult } from "../types/diagnostic.js";
-import { CODE_FENCE_ERROR, PREAMBLE_ERROR } from "../constants/authoringRules.js";
+import { CODE_FENCE_ERROR, HEADING_DEPTH_ERROR, PREAMBLE_ERROR } from "../constants/authoringRules.js";
 
 // Copied verbatim from cachiva-backend/src/utils/markdownValidator.ts —
 // Phase 3 of the shared Markdown package migration. `tokens` is accepted for
@@ -22,6 +22,7 @@ export function validateMarkdownSource(
   const lines = cleaned.split(/\r?\n/);
   const firstNonEmpty = lines.find((line) => line.trim()) || "";
   const h1Lines: number[] = [];
+  let hasOverdeepHeading = false;
 
   if (!/^#\s+\S/.test(firstNonEmpty)) {
     errors.push("Must start with a level-1 title heading, e.g. '# My Title'.");
@@ -61,10 +62,18 @@ export function validateMarkdownSource(
     if (!inFence && /^#\s+\S/.test(line)) {
       h1Lines.push(idx + 1);
     }
+
+    if (!inFence && /^#{7,}\s+\S/.test(line)) {
+      hasOverdeepHeading = true;
+    }
   }
 
   if (h1Lines.length > 1) {
-    errors.push("Only one level-1 title heading is allowed. Use ##, ###, or #### for sections inside the note.");
+    errors.push("Only one level-1 title heading is allowed. Use ## through ###### for sections inside the note.");
+  }
+
+  if (hasOverdeepHeading) {
+    errors.push(HEADING_DEPTH_ERROR);
   }
 
   if (/^##\s+Table of Contents/m.test(raw)) {

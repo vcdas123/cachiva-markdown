@@ -1,4 +1,4 @@
-import { CODE_FENCE_ERROR, PREAMBLE_ERROR } from "../constants/authoringRules.js";
+import { CODE_FENCE_ERROR, HEADING_DEPTH_ERROR, PREAMBLE_ERROR } from "../constants/authoringRules.js";
 import { parseMarkdownSource } from "../parser/markdownIt.js";
 
 export interface MarkdownDiagnosticItem {
@@ -37,6 +37,7 @@ export function getMarkdownDiagnostics(raw: string): MarkdownDiagnosticItem[] {
   const firstNonEmptyIdx = lines.findIndex((line) => line.trim());
   const firstNonEmpty = firstNonEmptyIdx >= 0 ? lines[firstNonEmptyIdx] : "";
   const h1LineIndexes: number[] = [];
+  const overdeepHeadingLineIndexes: number[] = [];
 
   if (!/^#\s+\S/.test(firstNonEmpty)) {
     diagnostics.push({
@@ -96,16 +97,28 @@ export function getMarkdownDiagnostics(raw: string): MarkdownDiagnosticItem[] {
     if (!inFence && /^#\s+\S/.test(line)) {
       h1LineIndexes.push(idx);
     }
+
+    if (!inFence && /^#{7,}\s+\S/.test(line)) {
+      overdeepHeadingLineIndexes.push(idx);
+    }
   });
 
   if (h1LineIndexes.length > 1) {
     for (const idx of h1LineIndexes.slice(1)) {
       diagnostics.push({
-        message: "Only one level-1 title heading is allowed. Use ##, ###, or #### for sections inside the note.",
+        message: "Only one level-1 title heading is allowed. Use ## through ###### for sections inside the note.",
         severity: "error",
         line: idx + 1,
       });
     }
+  }
+
+  for (const idx of overdeepHeadingLineIndexes) {
+    diagnostics.push({
+      message: HEADING_DEPTH_ERROR,
+      severity: "error",
+      line: idx + 1,
+    });
   }
 
   lines.forEach((line, idx) => {
