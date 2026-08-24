@@ -1,5 +1,5 @@
-// Copied verbatim from cachiva-backend/src/constants/noteFormat.ts —
-// the reference example embedded in the format guide and both AI prompts.
+// Canonical reference note embedded in the format guide and both AI prompts.
+// Keep it representative of the reader features the authoring contract supports.
 export const EXAMPLE_MARKDOWN = `# Docker Images
 
 A short intro paragraph. This text appears before the first section and is
@@ -25,6 +25,12 @@ A Docker image is a **read-only template** used to create containers.
 FROM node:20
 COPY . /app
 RUN npm install
+\`\`\`
+
+\`\`\`mermaid
+flowchart LR
+  Source --> Image
+  Image --> Container
 \`\`\`
 
 > Tip: keep layers small for faster builds.

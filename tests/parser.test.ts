@@ -24,3 +24,17 @@ test("a fenced code block keeps its declared language", () => {
   assert.ok(codeBlock && codeBlock.type === "code");
   assert.equal(codeBlock.language, "dockerfile");
 });
+
+test("a Mermaid fence is preserved for visual rendering by the frontend", () => {
+  const source = parseMarkdownSource(EXAMPLE_MARKDOWN);
+  const parsed = transformMarkdownTokens(source.tokens);
+  const diagram = parsed.sections[1].blocks.find(
+    (block) =>
+      block.type === "code" &&
+      block.language === "mermaid" &&
+      typeof block.value === "string",
+  );
+
+  assert.ok(diagram && diagram.type === "code" && typeof diagram.value === "string");
+  assert.match(diagram.value, /^flowchart LR/);
+});

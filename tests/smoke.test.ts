@@ -4,6 +4,7 @@ import {
   CODE_FENCE_RULE,
   MARKDOWN_VALIDATION_NOTICE,
   SUPPORTED_BLOCKS,
+  SUPPORTED_DIAGRAM_LANGUAGES,
   MARKDOWN_RULES,
   NOTE_FORMAT_GUIDE,
   createAnchorId,
@@ -20,6 +21,11 @@ test("SUPPORTED_BLOCKS is the expected static list", () => {
     "image",
     "divider",
   ]);
+});
+
+test("Mermaid is the supported diagram fence language", () => {
+  assert.deepEqual(SUPPORTED_DIAGRAM_LANGUAGES, ["mermaid"]);
+  assert.deepEqual(NOTE_FORMAT_GUIDE.supported_diagram_languages, ["mermaid"]);
 });
 
 test("MARKDOWN_RULES has the mandatory output contract and 8 format rules", () => {
