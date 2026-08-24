@@ -1,15 +1,13 @@
 import { EXAMPLE_MARKDOWN } from "./exampleMarkdown.js";
 import { MARKDOWN_RULES } from "./markdownRules.js";
 import { SUPPORTED_BLOCKS } from "./supportedBlocks.js";
+import { SUPPORTED_DIAGRAM_LANGUAGES } from "./supportedDiagrams.js";
 import { AI_PROMPT } from "../prompts/aiPrompt.js";
 import { RESTRUCTURE_PROMPT } from "../prompts/restructurePrompt.js";
 
-// Re-composed from cachiva-backend/src/constants/noteFormat.ts's
-// `guide` object — same shape and content, just built from the smaller
-// pieces above instead of one flat file. This is what GET /api/note-format
-// returns today; the backend keeps returning its own copy for now (Phase 1
-// is additive only — see the Phase 1 plan for what's intentionally not
-// wired up yet).
+// Canonical format guide consumed directly by the frontend and backend.
+// It is composed from focused constants so authoring prompts, displayed rules,
+// validation guidance, and supported-feature metadata cannot drift.
 export const NOTE_FORMAT_GUIDE = {
   version: "1.0",
   summary: "How to author a Markdown (.md) note this platform can parse correctly.",
@@ -20,9 +18,11 @@ export const NOTE_FORMAT_GUIDE = {
     section: "## Section Title (level-2 heading -> appears in navigation)",
     subsection: "### Subsection Title (level-3 heading)",
     code: "```<language>\n ...code... \n```",
+    diagram: "```mermaid\nflowchart LR\n  A --> B\n```",
     table: "| Col A | Col B |\n| --- | --- |\n| a | b |",
   },
   supported_blocks: SUPPORTED_BLOCKS,
+  supported_diagram_languages: SUPPORTED_DIAGRAM_LANGUAGES,
   example_markdown: EXAMPLE_MARKDOWN,
   restructure_prompt: RESTRUCTURE_PROMPT,
   ai_prompt: AI_PROMPT,
