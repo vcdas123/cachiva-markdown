@@ -72,3 +72,38 @@ test("a fix rewrites only its own line", () => {
   const changed = before.filter((line, i) => line !== after[i]);
   assert.equal(changed.length, 1);
 });
+
+test("a missing title is repaired from a title the author already supplied", () => {
+  const md = "Some prose.\n\n## Section\n\nBody.\n";
+  assert.deepEqual(getAutoFixes(md), [], "nothing to draw on without a title");
+
+  const fixes = getAutoFixes(md, { title: "My Note" });
+  assert.equal(fixes.length, 1);
+  assert.equal(fixes[0].kind, "insert-title");
+
+  const fixed = applyAutoFix(md, fixes[0]);
+  assert.match(fixed, /^# My Note$/m);
+  // The original first line survives as the preamble the structure requires.
+  assert.match(fixed, /^# My Note\n\nSome prose\.\n\n## Section\n/);
+  assert.equal(validateMarkdown(fixed).ok, true, validateMarkdown(fixed).errors.join(" | "));
+});
+
+test("a document that already has a title is not given a second one", () => {
+  const md = "# Existing\n\nOverview.\n\n## Section\n\nBody.\n";
+  assert.deepEqual(getAutoFixes(md, { title: "Another" }), []);
+});
+
+test("a blank or whitespace-only title supplies nothing", () => {
+  const md = "Prose.\n\n## Section\n\nBody.\n";
+  assert.deepEqual(getAutoFixes(md, { title: "   " }), []);
+  assert.deepEqual(getAutoFixes(md, { title: null }), []);
+});
+
+test("applying everything at once handles an insertion alongside replacements", () => {
+  const md = "Prose.\n\n## Section\n\n```\ncode\n```\n";
+  const fixed = applyAllAutoFixes(md, { title: "My Note" });
+  assert.match(fixed, /^# My Note$/m);
+  assert.match(fixed, /```text/);
+  assert.equal(getAutoFixes(fixed, { title: "My Note" }).length, 0);
+  assert.equal(validateMarkdown(fixed).ok, true, validateMarkdown(fixed).errors.join(" | "));
+});

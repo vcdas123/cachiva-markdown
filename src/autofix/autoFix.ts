@@ -8,7 +8,7 @@ import { CODE_FENCE_LANGUAGE_FALLBACK } from "../constants/authoringRules.js";
  * text would be worse than the error it replaced. Those stay the author's
  * job, reported by the validator.
  */
-export type AutoFixKind = "code-fence-language" | "heading-too-deep" | "extra-title";
+export type AutoFixKind = "code-fence-language" | "heading-too-deep" | "extra-title" | "insert-title";
 
 export interface AutoFix {
   kind: AutoFixKind;
@@ -16,14 +16,26 @@ export interface AutoFix {
   line: number;
   /** Shown on the control that applies it. */
   label: string;
-  /** What the line becomes. */
+  /** What the line becomes, or the text inserted when `insert` is set. */
   replacement: string;
+  /** Inserts before `line` instead of replacing it. */
+  insert?: boolean;
+}
+
+export interface AutoFixContext {
+  /**
+   * A title the author has already supplied elsewhere — the editor's own
+   * Title field. Only then can a missing H1 be repaired: the text comes from
+   * the author, not from this module guessing at one.
+   */
+  title?: string | null;
 }
 
 const FIX_LABELS: Record<AutoFixKind, string> = {
   "code-fence-language": `Label as \`${CODE_FENCE_LANGUAGE_FALLBACK}\``,
   "heading-too-deep": "Change to a level-6 heading",
   "extra-title": "Demote to a section heading",
+  "insert-title": "Use the title above",
 };
 
 /**
@@ -36,7 +48,7 @@ const FIX_LABELS: Record<AutoFixKind, string> = {
  * Code fence *contents* are never inspected or altered — a `###### ` inside a
  * code block is code, not a heading.
  */
-export function getAutoFixes(markdown: string): AutoFix[] {
+export function getAutoFixes(markdown: string, context: AutoFixContext = {}): AutoFix[] {
   const lines = (markdown ?? "").replace(/\r\n?/g, "\n").split("\n");
   const fixes: AutoFix[] = [];
 
@@ -94,6 +106,20 @@ export function getAutoFixes(markdown: string): AutoFix[] {
     }
   }
 
+  // A missing title is repairable only when the author has already written
+  // one somewhere else. With nothing to draw on this stays an error for them
+  // to resolve — inventing a title would be worse than the error it replaced.
+  const suppliedTitle = (context.title ?? "").replace(/\s+/g, " ").trim();
+  if (!seenTitle && suppliedTitle) {
+    fixes.unshift({
+      kind: "insert-title",
+      line: 1,
+      label: FIX_LABELS["insert-title"],
+      replacement: `# ${suppliedTitle}\n`,
+      insert: true,
+    });
+  }
+
   return fixes;
 }
 
@@ -102,8 +128,9 @@ export function applyAutoFix(markdown: string, fix: AutoFix): string {
   const normalized = (markdown ?? "").replace(/\r\n?/g, "\n");
   const lines = normalized.split("\n");
   const index = fix.line - 1;
-  if (index < 0 || index >= lines.length) return normalized;
-  lines[index] = fix.replacement;
+  if (index < 0 || index > lines.length) return normalized;
+  if (fix.insert) lines.splice(index, 0, fix.replacement);
+  else if (index < lines.length) lines[index] = fix.replacement;
   return lines.join("\n");
 }
 
@@ -114,13 +141,19 @@ export function applyAutoFix(markdown: string, fix: AutoFix): string {
  * applied together rather than re-scanned between applications, so the line
  * numbers stay valid throughout.
  */
-export function applyAllAutoFixes(markdown: string): string {
-  const fixes = getAutoFixes(markdown);
+export function applyAllAutoFixes(markdown: string, context: AutoFixContext = {}): string {
+  const fixes = getAutoFixes(markdown, context);
   if (!fixes.length) return markdown;
   const lines = (markdown ?? "").replace(/\r\n?/g, "\n").split("\n");
-  for (const fix of fixes) {
+  // Replacements first, so their line numbers still refer to the original
+  // document; only then the insertions, applied from the bottom up so each
+  // one cannot shift the next.
+  for (const fix of fixes.filter((item) => !item.insert)) {
     const index = fix.line - 1;
     if (index >= 0 && index < lines.length) lines[index] = fix.replacement;
+  }
+  for (const fix of fixes.filter((item) => item.insert).sort((a, b) => b.line - a.line)) {
+    lines.splice(Math.max(0, fix.line - 1), 0, fix.replacement);
   }
   return lines.join("\n");
 }
