@@ -13,3 +13,9 @@ export * from "./formatter/index.js";
 // Internal Cachiva references (`cachiva://module/<id>`, `cachiva://note/<id>`),
 // shared by the backend's write-path validation and the frontend's renderer.
 export * from "./references/index.js";
+// Structural assembly shared by every authoring interface. Framework-free by
+// design: no editor library may leak into this package.
+export * from "./authoring/index.js";
+// Deterministic repairs for the validation errors that have exactly one
+// correct outcome. Shared so every editor offers the same fixes.
+export * from "./autofix/index.js";
