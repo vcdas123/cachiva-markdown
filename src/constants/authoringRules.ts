@@ -1,3 +1,5 @@
+export const CODE_FENCE_LANGUAGE_FALLBACK = "text";
+
 export const MARKDOWN_VALIDATION_NOTICE =
   "Generate and return the complete note in Markdown (.md) format by following every rule below. Deviations are not accepted: Cachiva validates the note with its Markdown parser and will reject the note if any required rule is violated.";
 

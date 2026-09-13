@@ -1,5 +1,6 @@
 export * from "./exampleMarkdown.js";
 export * from "./authoringRules.js";
+export * from "./authoringModes.js";
 export * from "./markdownRules.js";
 export * from "./supportedBlocks.js";
 export * from "./supportedDiagrams.js";
