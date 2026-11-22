@@ -122,3 +122,12 @@ test("flow: problems are reported and the block validates", () => {
   assert.deepEqual(validateMarkdown(wrap("```flow\nA -> B\n```")).errors, []);
   assert.equal(getMarkdownDiagnostics(wrap("```flow\n\n```")).some((d) => d.severity === "error"), true);
 });
+
+test("flow: text with trailing dashes is not mistaken for an arrow", () => {
+  const { model, problems } = parseFlowBlock("count-- -> next\nx -no-> count--\na->b");
+  assert.deepEqual(problems, []);
+  assert.equal(model.nodes.some((n) => n.label === "count--"), true);
+  assert.equal(model.nodes.some((n) => n.label === "count-"), false);
+  assert.equal(model.edges.find((e) => e.label === "no")?.to.endsWith("count--"), true);
+  assert.equal(model.edges.length, 3);
+});
