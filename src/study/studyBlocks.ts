@@ -84,9 +84,10 @@ export type FlowModel = {
 
 export const FLOW_MAX_NODES = 40;
 
-// `->` or a labelled arrow `-label->`. The label may hold spaces and common punctuation but never `-` or `>`,
-// so node text such as `count--` or `a - b` is not mistaken for an arrow.
-const FLOW_ARROW = /\s*(?:-([^->\n]+?)->|->)\s*/;
+// `->` or a labelled arrow `-label->` (spaces around a labelled arrow). The label never holds `-` or `>`, and a
+// plain `->` must not be preceded by `-`, so node text such as `count--`, `a - b` or `count-- -> next` keeps
+// every character.
+const FLOW_ARROW = /\s+-([^->\n]*[^\s->][^->\n]*)->\s+|\s*(?<!-)->\s*/;
 
 function flowNode(raw: string): { label: string; kind: FlowNodeKind } | null {
   const text = raw.trim();
