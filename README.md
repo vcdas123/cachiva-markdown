@@ -1,8 +1,8 @@
-# @learning-hub/markdown
+# @cachiva/markdown
 
 Shared Markdown engine for [Cachiva](https://github.com/vcdas123) — the single source of truth for Markdown constants, prompts, heading anchors, parsing, validation, formatting, and types used by `cachiva-frontend` and `cachiva-backend`.
 
-The repository is named `cachiva-markdown`. The published/imported package name remains `@learning-hub/markdown` for compatibility with the existing application contract.
+The repository is `cachiva-markdown`; the package is published on npm as `@cachiva/markdown` (public, under the `cachiva` org).
 
 ## Purpose
 
@@ -14,7 +14,7 @@ Without a shared package, the format guide, prompt templates, heading-anchor gen
 cachiva-frontend
         │
         ▼
-@learning-hub/markdown
+@cachiva/markdown
         ▲
         │
 cachiva-backend
@@ -24,7 +24,7 @@ Both apps depend on this package (as a GitHub dependency, see Install below) and
 
 ## What it exports
 
-Everything below is re-exported from the package root (`src/index.ts`) and imported as `@learning-hub/markdown`.
+Everything below is re-exported from the package root (`src/index.ts`) and imported as `@cachiva/markdown`.
 
 - **`constants/`** — `NOTE_FORMAT_GUIDE` (the composed note-format guide object: version, summary, rules, structure, supported blocks and diagram languages, example note, and both prompts), `MARKDOWN_RULES`, `SUPPORTED_BLOCKS` (+ `SupportedBlockType`), `SUPPORTED_DIAGRAM_LANGUAGES` (+ `SupportedDiagramLanguage`), `EXAMPLE_MARKDOWN` (the reference example note), and the authoring-rule strings `MARKDOWN_VALIDATION_NOTICE` / `CODE_FENCE_RULE` / `CODE_FENCE_ERROR`.
 - **`prompts/`** — `AI_PROMPT` (the "generate a note" prompt template) and `RESTRUCTURE_PROMPT` (the "restructure an existing note" prompt template).
@@ -50,7 +50,9 @@ Study notes (the DSA notes) are ordinary Cachiva notes, so the format supports w
 - **Question references**: `cachiva://question/<id>` (a positive integer, a `dsa_dashboard.questions.id`) is a third reference kind beside `module` and `note`. A ` ```practice` block lists them one per line, as `[Title](cachiva://question/12)` or bare `cachiva://question/12` (the title is a display hint only); the reader renders it as that section's Practice list. `extractCachivaReferences` now also returns `questionIds` (from inline links and `practice` blocks). Exports: `parsePracticeBlock`, `formatPracticeLine`, `PRACTICE_BLOCK_LANGUAGE`.
 - `NOTE_FORMAT_GUIDE.version` is `1.1` and gains `study_blocks`, `callout_kinds` and `structure` examples.
 
-Consumers must install the same version: bump `@learning-hub/markdown` in both `cachiva-backend` and `cachiva-frontend` (they depend on the GitHub repo, so `npm update @learning-hub/markdown` after the new commit is pushed).
+Consumers must install the same version: bump `@cachiva/markdown` in both `cachiva-backend` and `cachiva-frontend` after publishing (`npm install @cachiva/markdown@<version>`).
+
+Publishing: bump `version` in `package.json`, then `npm publish` (the `prepublishOnly` script builds `dist/` first; `publishConfig.access` is `public`, and npm asks for a one-time 2FA code).
 
 ## Build / typecheck
 
@@ -65,13 +67,13 @@ Runtime dependency: `markdown-it`. Dev dependencies: `typescript`, `@types/node`
 
 ## Install / consumption
 
-Both `cachiva-frontend` and `cachiva-backend` depend on this package straight from GitHub — not a local workspace or `file:` path:
+Both `cachiva-frontend` and `cachiva-backend` depend on the published npm package:
 
 ```json
-"@learning-hub/markdown": "github:vcdas123/cachiva-markdown"
+"@cachiva/markdown": "^0.4.0"
 ```
 
-`npm install` in either app clones this repo, then runs its `prepare` script (`npm run build`) so `dist/` is generated on install. The package is ESM-only (`"type": "module"`); consumers resolve it through the `exports` field to `dist/src/index.js` / `dist/src/index.d.ts`.
+`npm install` downloads the prebuilt `dist/` (no build step on install). The package is ESM-only (`"type": "module"`); consumers resolve it through the `exports` field to `dist/src/index.js` / `dist/src/index.d.ts`.
 
 ## Usage
 
@@ -85,7 +87,7 @@ import {
   formatMarkdown,
   parseMarkdownSource,
   transformMarkdownTokens,
-} from "@learning-hub/markdown";
+} from "@cachiva/markdown";
 
 const { tokens } = parseMarkdownSource(rawMarkdown);
 const parsedNote = transformMarkdownTokens(tokens);
