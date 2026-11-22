@@ -10,7 +10,7 @@ import { RESTRUCTURE_PROMPT } from "../prompts/restructurePrompt.js";
 // It is composed from focused constants so authoring prompts, displayed rules,
 // validation guidance, and supported-feature metadata cannot drift.
 export const NOTE_FORMAT_GUIDE = {
-  version: "1.1",
+  version: "1.2",
   summary: "How to author a Markdown (.md) note this platform can parse correctly.",
   rules: MARKDOWN_RULES,
   structure: {
@@ -22,6 +22,10 @@ export const NOTE_FORMAT_GUIDE = {
     diagram: "```mermaid\nflowchart LR\n  A --> B\n```",
     table: "| Col A | Col B |\n| --- | --- |\n| a | b |",
     callout: "> [!NOTE]\n> Callout text. Kinds: NOTE, TIP, IMPORTANT, WARNING.",
+    flow: "```flow\ndirection: right\ncaption: A singly linked list.\nHead -> 10 -> 20 -> null\n```",
+    tree: "```tree\nnodes: A B C - D\ncaption: A binary tree in level order ('-' = no child).\n```",
+    array: "```array\nvalues: 4 7 1 9\nstart: 0\n```",
+    formula: "```formula\nT(n) = 2T(n/2) + n\n```",
     tabs: "```tabs\n=== Java\nint x = 1;\n=== Python\nx = 1\n```",
     practice: "```practice\n[Two Sum](cachiva://question/12)\ncachiva://question/34\n```",
   },

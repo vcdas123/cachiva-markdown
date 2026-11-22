@@ -91,3 +91,34 @@ test("question references: href parsing and extraction from links and practice b
   assert.deepEqual(refs.moduleIds, ["m1"]);
   assert.deepEqual(refs.noteIds, []);
 });
+
+import { parseFlowBlock } from "../src/index.js";
+
+test("flow: a chain becomes nodes and edges, null is a marker, options are read", () => {
+  const { model, problems } = parseFlowBlock("direction: down\ncaption: A list\nHead -> 10 -> 20 -> null");
+  assert.deepEqual(problems, []);
+  assert.equal(model.direction, "down");
+  assert.equal(model.caption, "A list");
+  assert.deepEqual(model.nodes.map((n) => `${n.kind}:${n.label}`), ["box:Head", "box:10", "box:20", "null:null"]);
+  assert.equal(model.edges.length, 3);
+});
+
+test("flow: labelled branches, decisions, terminals and shared nodes", () => {
+  const { model, problems } = parseFlowBlock(
+    ["(Start) -> count == 0?", "count == 0? -yes-> candidate = x", "count == 0? -no-> count--", "count-- -> (Done)", "candidate = x -> (Done)"].join("\n"),
+  );
+  assert.deepEqual(problems, []);
+  const decision = model.nodes.find((n) => n.kind === "decision");
+  assert.equal(decision?.label, "count == 0?");
+  assert.equal(model.edges.filter((e) => e.from === decision?.id).map((e) => e.label).sort().join(","), "no,yes");
+  assert.equal(model.nodes.filter((n) => n.label === "Done").length, 1);
+  assert.equal(model.nodes.some((n) => n.label === "count--"), true);
+});
+
+test("flow: problems are reported and the block validates", () => {
+  assert.equal(parseFlowBlock("").problems.length, 1);
+  assert.equal(parseFlowBlock("A ->").problems.length, 1);
+  assert.equal(parseFlowBlock("direction: sideways\nA -> B").problems.length, 1);
+  assert.deepEqual(validateMarkdown(wrap("```flow\nA -> B\n```")).errors, []);
+  assert.equal(getMarkdownDiagnostics(wrap("```flow\n\n```")).some((d) => d.severity === "error"), true);
+});
