@@ -22,6 +22,7 @@ export type Block =
   | { type: "code"; language: string; value: string }
   | { type: "table"; headers: Inline[][]; rows: Inline[][][] }
   | { type: "list"; ordered: boolean; items: Block[][] }
-  | { type: "blockquote"; children: Block[] }
+  // `callout` is set for `> [!NOTE]`-style alerts (marker line removed); plain quotes omit it.
+  | { type: "blockquote"; children: Block[]; callout?: "NOTE" | "TIP" | "IMPORTANT" | "WARNING" }
   | { type: "divider" }
   | { type: string; [key: string]: unknown };

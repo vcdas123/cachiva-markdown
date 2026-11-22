@@ -1,4 +1,5 @@
 import { parseMarkdownSource, type MarkdownToken } from "../parser/markdownIt.js";
+import { PRACTICE_BLOCK_LANGUAGE, parsePracticeBlock } from "../study/studyBlocks.js";
 
 /**
  * An internal Cachiva link, written as an ordinary Markdown link whose href
@@ -7,6 +8,7 @@ import { parseMarkdownSource, type MarkdownToken } from "../parser/markdownIt.js
  * ```md
  * [Node.js Fundamentals](cachiva://module/<moduleId>)
  * [Event Loop Phases](cachiva://note/<noteId>)
+ * [Two Sum](cachiva://question/<questionId>)
  * ```
  *
  * Only immutable IDs are stored, never titles or names, so renaming a module
@@ -15,6 +17,10 @@ import { parseMarkdownSource, type MarkdownToken } from "../parser/markdownIt.js
  * A note reference deliberately carries no `moduleId`: a note can be moved to
  * another module later, and a stored `moduleId` would silently rot. The
  * owning module is resolved at click time instead.
+ *
+ * A question reference points at a Practice question (`dsa_dashboard.questions.id`, a positive
+ * integer). Questions are referenced, never copied. A fenced ```practice block lists question
+ * references one per line (see `parsePracticeBlock`) and renders as a section's Practice list.
  */
 export type CachivaReference =
   | {
@@ -24,6 +30,10 @@ export type CachivaReference =
   | {
       type: "note";
       noteId: string;
+    }
+  | {
+      type: "question";
+      questionId: number;
     };
 
 /**
@@ -35,7 +45,8 @@ export type CachivaReference =
  * (`cachiva://group/<id>`) are not a supported reference type and fall
  * through as a non-match, as does an empty ID.
  */
-const CACHIVA_REFERENCE_HREF = /^cachiva:\/\/(module|note)\/([^/?#\s]+)$/;
+const CACHIVA_REFERENCE_HREF = /^cachiva:\/\/(module|note|question)\/([^/?#\s]+)$/;
+const QUESTION_ID = /^[1-9]\d{0,9}$/;
 
 /**
  * Parses a link href into a Cachiva reference, or returns `null` when the
@@ -54,6 +65,7 @@ export function parseCachivaReferenceHref(href: string): CachivaReference | null
   const [, kind, id] = match;
   if (!id) return null;
 
+  if (kind === "question") return QUESTION_ID.test(id) ? { type: "question", questionId: Number(id) } : null;
   return kind === "module" ? { type: "module", moduleId: id } : { type: "note", noteId: id };
 }
 
@@ -73,16 +85,22 @@ export function parseCachivaReferenceHref(href: string): CachivaReference | null
 export function extractCachivaReferences(markdown: string): {
   moduleIds: string[];
   noteIds: string[];
+  questionIds: number[];
 } {
   const moduleIds = new Set<string>();
   const noteIds = new Set<string>();
+  const questionIds = new Set<number>();
 
   if (typeof markdown !== "string" || markdown.trim().length === 0) {
-    return { moduleIds: [], noteIds: [] };
+    return { moduleIds: [], noteIds: [], questionIds: [] };
   }
 
   const visit = (tokens: MarkdownToken[]): void => {
     for (const token of tokens) {
+      // A ```practice block is the one fenced block whose lines are references.
+      if (token.type === "fence" && token.info.trim() === PRACTICE_BLOCK_LANGUAGE) {
+        for (const id of parsePracticeBlock(token.content).questionIds) questionIds.add(id);
+      }
       // Inline tokens hold the actual links in their children.
       if (token.children && token.children.length > 0) {
         visit(token.children);
@@ -94,6 +112,8 @@ export function extractCachivaReferences(markdown: string): {
 
       if (reference.type === "module") {
         moduleIds.add(reference.moduleId);
+      } else if (reference.type === "question") {
+        questionIds.add(reference.questionId);
       } else {
         noteIds.add(reference.noteId);
       }
@@ -102,5 +122,5 @@ export function extractCachivaReferences(markdown: string): {
 
   visit(parseMarkdownSource(markdown).tokens);
 
-  return { moduleIds: [...moduleIds], noteIds: [...noteIds] };
+  return { moduleIds: [...moduleIds], noteIds: [...noteIds], questionIds: [...questionIds] };
 }

@@ -1,6 +1,7 @@
 import type { MarkdownToken } from "./markdownIt.js";
 import type { Block, Inline } from "../types/block.js";
 import { createAnchorId } from "../anchor/createAnchorId.js";
+import { CALLOUT_KINDS } from "../study/studyBlocks.js";
 
 // Copied verbatim (logic unchanged) from
 // cachiva-backend/src/utils/markdownTransformer.ts, typed against this
@@ -148,6 +149,30 @@ function parseTable(tokens: MarkdownToken[]): Block {
   return { type: "table", headers, rows };
 }
 
+const CALLOUT_MARKER = new RegExp(`^\\[!(${CALLOUT_KINDS.join("|")})\\]\\s*$`, "i");
+
+/**
+ * A blockquote whose first line is `[!NOTE]` (or TIP / IMPORTANT / WARNING) is a callout: the
+ * marker line is removed and the kind recorded in `callout`. Anything else is a plain quote.
+ */
+function blockquoteBlock(children: Block[]): Block {
+  const first = children[0];
+  if (first?.type === "paragraph") {
+    const inline = (first as { inline: Inline[] }).inline;
+    const marker = inline[0];
+    if (marker?.t === "text") {
+      const match = CALLOUT_MARKER.exec(marker.v);
+      if (match && (inline.length === 1 || inline[1].t === "break")) {
+        const rest = inline.slice(inline[1]?.t === "break" ? 2 : 1);
+        const callout = match[1].toUpperCase() as (typeof CALLOUT_KINDS)[number];
+        const body = rest.length ? [{ type: "paragraph", inline: rest } as Block, ...children.slice(1)] : children.slice(1);
+        return { type: "blockquote", callout, children: body };
+      }
+    }
+  }
+  return { type: "blockquote", children };
+}
+
 export function tokensToBlocks(tokens: MarkdownToken[]): Block[] {
   const blocks: Block[] = [];
   let i = 0;
@@ -188,7 +213,7 @@ export function tokensToBlocks(tokens: MarkdownToken[]): Block[] {
       i = close + 1;
     } else if (token.type === "blockquote_open") {
       const close = findBlockClose(tokens, i);
-      blocks.push({ type: "blockquote", children: tokensToBlocks(tokens.slice(i + 1, close)) });
+      blocks.push(blockquoteBlock(tokensToBlocks(tokens.slice(i + 1, close))));
       i = close + 1;
     } else if (token.type === "table_open") {
       const close = findBlockClose(tokens, i);

@@ -23,6 +23,9 @@ export type NoteFormatGuide = {
   rules: readonly string[];
   structure: Record<string, string>;
   supported_blocks: readonly string[];
+  /** Optional study-note fence languages and callout kinds (guide version 1.1+). */
+  study_blocks?: readonly string[];
+  callout_kinds?: readonly string[];
   example_markdown: string;
   ai_prompt: string;
   restructure_prompt: string;
