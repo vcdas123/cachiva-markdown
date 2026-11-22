@@ -16,6 +16,7 @@ FORMAT RULES:
 7. Use GitHub-style pipe tables with a \`| --- |\` separator row.
 8. Use **bold**, *italic*, \`inline code\`, [links](url), and \`-\`/\`1.\` lists.
 9. Do NOT add navigation links, a manual Table of Contents, or a Navigation footer — the platform creates those automatically.
+10. Optional visual blocks (use them where they help understanding): \`\`\`flow for simple pointer pictures and small decision flows (one chain per line: \`Head -> 10 -> 20 -> null\`; branches: \`count == 0? -yes-> pick x\` and \`count == 0? -no-> count--\`; \`(Start)\` makes a rounded terminal; options \`direction: right|down\` and \`caption: text\`), \`\`\`tree, \`\`\`array, \`\`\`formula, \`\`\`tabs (the same code in several languages, each tab starting with \`=== Java\`), and \`\`\`mermaid only for larger diagrams.
 
 Here is a reference example of the exact format:
 
