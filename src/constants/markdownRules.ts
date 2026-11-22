@@ -9,5 +9,7 @@ export const MARKDOWN_RULES = [
   CODE_FENCE_RULE,
   "Tables use standard GitHub pipe syntax with a header separator row ('| --- | --- |').",
   "Use '**bold**', '*italic*', '`inline code`', and '[text](url)' for inline formatting. Lists use '-' (bullets) or '1.' (numbered).",
+  "Link to other Cachiva content with internal references: [Title](cachiva://module/<moduleId>), [Title](cachiva://note/<noteId>) or [Title](cachiva://question/<questionId>). Look the ids up first; a reference that does not resolve is rejected, so never invent an id and never use the web app's page URL for Cachiva content.",
+  "Use the visual blocks when they teach better than prose: ```flow (pointer pictures and small decision flows), ```tree, ```array, ```formula, ```tabs (one tab per language or approach), ```practice (linked practice questions), ```mermaid (larger diagrams) and callouts ('> [!NOTE]', TIP, IMPORTANT, WARNING).",
   "Do NOT include manual navigation lines, a manual 'Table of Contents', or a '## Navigation' footer. The platform generates navigation automatically.",
 ] as const;

@@ -27,8 +27,19 @@ export const NOTE_FORMAT_GUIDE = {
     array: "```array\nvalues: 4 7 1 9\nstart: 0\n```",
     formula: "```formula\nT(n) = 2T(n/2) + n\n```",
     tabs: "```tabs\n=== Java\nint x = 1;\n=== Python\nx = 1\n```",
+    reference: "[Event Loop](cachiva://note/<noteId>)  [Node.js](cachiva://module/<moduleId>)  [Two Sum](cachiva://question/12)",
     practice: "```practice\n[Two Sum](cachiva://question/12)\ncachiva://question/34\n```",
   },
+  // What a note must not contain (each is rejected or stripped by the parser).
+  not_allowed: [
+    "More than one '# ' heading, or a note that does not start with the '# Title' line",
+    "A missing preamble paragraph between the title and the first '## ' section",
+    "Fenced code blocks without a language (use ```text when nothing fits)",
+    "Headings deeper than six levels",
+    "A manual table of contents, navigation lines or a '## Navigation' footer",
+    "cachiva:// references to modules, notes or questions that do not exist",
+    "A pasted transcript or raw copy of the source: restructure it into explained sections",
+  ],
   // Optional study-note blocks (additive; plain notes never need them).
   study_blocks: STUDY_BLOCK_LANGUAGES,
   callout_kinds: CALLOUT_KINDS,
