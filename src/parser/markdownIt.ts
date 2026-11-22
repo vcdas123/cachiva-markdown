@@ -3,7 +3,7 @@ import MarkdownIt from "markdown-it";
 // Copied verbatim from cachiva-backend/src/utils/markdownParser.ts —
 // Phase 2 of the shared Markdown package migration. This exact config/
 // comments must not change behavior for either app; see the Phase 1/2 plans
-// at the learning-hub workspace root.
+// at the cachiva workspace root.
 export const markdownIt = new MarkdownIt("commonmark", {
   // Never render raw HTML tags from note content — notes can come from
   // batch file uploads, not just trusted authors, so this is a real

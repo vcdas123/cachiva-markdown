@@ -1,6 +1,6 @@
 {
-  "name": "@learning-hub/markdown",
-  "version": "0.3.2",
+  "name": "@cachiva/markdown",
+  "version": "0.4.0",
   "description": "Shared Markdown parser, validator, formatter, constants, prompts, heading-anchor helpers, and types for Cachiva.",
   "type": "module",
   "main": "./dist/src/index.js",
@@ -18,9 +18,9 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "prepare": "npm run build",
     "typecheck": "tsc --noEmit",
-    "test": "npm run build && node --test dist/tests/*.test.js"
+    "test": "npm run build && node --test dist/tests/*.test.js",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "markdown-it": "^14.1.0"
@@ -29,5 +29,13 @@
     "typescript": "^5.6.0",
     "@types/node": "^22.0.0",
     "@types/markdown-it": "^14.1.2"
-  }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vcdas123/cachiva-markdown.git"
+  },
+  "license": "MIT"
 }
