@@ -40,6 +40,17 @@ Mermaid diagrams are officially supported through a typed ` ```mermaid` fence. T
 
 Tests live in `tests/` (`smoke`, `parser`, `validator`, `formatter`, `getMarkdownDiagnostics`, `stripBoilerplate`) and assert against the reference `EXAMPLE_MARKDOWN` note to catch drift.
 
+## Study-note blocks (v0.2.0)
+
+Study notes (the DSA notes) are ordinary Cachiva notes, so the format supports what they need. Everything is additive and backward compatible: older renderers show these as code blocks or plain quotes.
+
+- **Fenced blocks** with a dedicated reader renderer: ` ```tree`, ` ```array`, ` ```formula`, ` ```tabs` (tabs start with `=== Label` lines) and ` ```mermaid`. They are parsed as normal `{ type: "code", language, value }` blocks. The validator rejects an empty one, a `tabs` block that does not start with a `=== ` header, and a malformed `practice` block, with the line number in `getMarkdownDiagnostics`. Exports: `STUDY_BLOCK_LANGUAGES`, `parseTabsBlock`, `studyBlockProblems`.
+- **Callouts**: `> [!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]` (case-insensitive marker on the first line). The parser emits `{ type: "blockquote", callout: "NOTE" | ..., children }` with the marker line removed; a quote without a marker has no `callout`. Exports: `CALLOUT_KINDS`.
+- **Question references**: `cachiva://question/<id>` (a positive integer, a `dsa_dashboard.questions.id`) is a third reference kind beside `module` and `note`. A ` ```practice` block lists them one per line, as `[Title](cachiva://question/12)` or bare `cachiva://question/12` (the title is a display hint only); the reader renders it as that section's Practice list. `extractCachivaReferences` now also returns `questionIds` (from inline links and `practice` blocks). Exports: `parsePracticeBlock`, `formatPracticeLine`, `PRACTICE_BLOCK_LANGUAGE`.
+- `NOTE_FORMAT_GUIDE.version` is `1.1` and gains `study_blocks`, `callout_kinds` and `structure` examples.
+
+Consumers must install the same version: bump `@learning-hub/markdown` in both `cachiva-backend` and `cachiva-frontend` (they depend on the GitHub repo, so `npm update @learning-hub/markdown` after the new commit is pushed).
+
 ## Build / typecheck
 
 ```bash

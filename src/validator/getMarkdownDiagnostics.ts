@@ -1,5 +1,6 @@
 import { CODE_FENCE_ERROR, HEADING_DEPTH_ERROR, PREAMBLE_ERROR } from "../constants/authoringRules.js";
 import { parseMarkdownSource } from "../parser/markdownIt.js";
+import { studyBlockProblems } from "../study/studyBlocks.js";
 
 export interface MarkdownDiagnosticItem {
   message: string;
@@ -102,6 +103,13 @@ export function getMarkdownDiagnostics(raw: string): MarkdownDiagnosticItem[] {
       overdeepHeadingLineIndexes.push(idx);
     }
   });
+
+  for (const token of tokens) {
+    if (token.type !== "fence") continue;
+    for (const problem of studyBlockProblems(token.info.trim(), token.content)) {
+      diagnostics.push({ message: problem, severity: "error", line: (token.map?.[0] ?? 0) + 1 });
+    }
+  }
 
   if (h1LineIndexes.length > 1) {
     for (const idx of h1LineIndexes.slice(1)) {

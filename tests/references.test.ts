@@ -114,10 +114,10 @@ test("ignores references inside code, which are not links", () => {
     "```",
   ].join("\n");
 
-  assert.deepEqual(extractCachivaReferences(markdown), { moduleIds: [], noteIds: [] });
+  assert.deepEqual(extractCachivaReferences(markdown), { moduleIds: [], noteIds: [], questionIds: [] });
 });
 
 test("handles empty and whitespace-only input", () => {
-  assert.deepEqual(extractCachivaReferences(""), { moduleIds: [], noteIds: [] });
-  assert.deepEqual(extractCachivaReferences("   \n  "), { moduleIds: [], noteIds: [] });
+  assert.deepEqual(extractCachivaReferences(""), { moduleIds: [], noteIds: [], questionIds: [] });
+  assert.deepEqual(extractCachivaReferences("   \n  "), { moduleIds: [], noteIds: [], questionIds: [] });
 });
