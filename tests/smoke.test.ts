@@ -28,8 +28,8 @@ test("Mermaid is the supported diagram fence language", () => {
   assert.deepEqual(NOTE_FORMAT_GUIDE.supported_diagram_languages, ["mermaid"]);
 });
 
-test("MARKDOWN_RULES has the mandatory output contract and 8 format rules", () => {
-  assert.equal(MARKDOWN_RULES.length, 9);
+test("MARKDOWN_RULES has the mandatory output contract and 10 format rules", () => {
+  assert.equal(MARKDOWN_RULES.length, 11);
   assert.equal(MARKDOWN_RULES[0], MARKDOWN_VALIDATION_NOTICE);
 });
 
