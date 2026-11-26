@@ -1,3 +1,7 @@
+import { formatIssue } from "../diagram/validation.js";
+import { parseSequenceBlock } from "../sequence/sequence.parser.js";
+import { parseVisualBlock } from "../visual/visual.parser.js";
+
 // Study-note blocks: the extra fenced block types and callouts carried by DSA study notes,
 // now ordinary Cachiva notes. They are authored as normal Markdown and parsed into the
 // existing block shapes (a fenced block stays `{ type: "code", language, value }`; a callout
@@ -5,7 +9,7 @@
 // simply show them as code / a plain blockquote.
 
 /** Fence languages with a dedicated renderer in the reader. `mermaid` is listed in SUPPORTED_DIAGRAM_LANGUAGES. */
-export const STUDY_BLOCK_LANGUAGES = ["tree", "array", "formula", "tabs", "practice", "flow"] as const;
+export const STUDY_BLOCK_LANGUAGES = ["tree", "array", "formula", "tabs", "practice", "flow", "visual", "sequence"] as const;
 export type StudyBlockLanguage = (typeof STUDY_BLOCK_LANGUAGES)[number];
 
 /** `> [!NOTE]`-style callouts (GitHub alert syntax). */
@@ -172,6 +176,7 @@ export function studyBlockProblems(language: string, value: string): string[] {
     return ["A `tabs` block must start with a tab header line such as '=== Java'."];
   }
   if (language === "flow") return parseFlowBlock(value).problems;
+  if (language === "visual" || language === "sequence") return diagramBlockProblems(language, value);
   if (language === "practice") {
     const { invalidLines } = parsePracticeBlock(value);
     if (invalidLines.length) {
@@ -181,4 +186,11 @@ export function studyBlockProblems(language: string, value: string): string[] {
     }
   }
   return [];
+}
+
+/** The JSON diagram blocks: one message per issue, each naming the property path so the author can find it. */
+function diagramBlockProblems(language: "visual" | "sequence", value: string): string[] {
+  const result = language === "visual" ? parseVisualBlock(value) : parseSequenceBlock(value);
+  if (result.ok) return [];
+  return result.issues.map((issue) => `Invalid \`${language}\` block. ${formatIssue(issue)}`);
 }

@@ -4,4 +4,5 @@ export * from "./authoringModes.js";
 export * from "./markdownRules.js";
 export * from "./supportedBlocks.js";
 export * from "./supportedDiagrams.js";
+export * from "./diagramGuide.js";
 export * from "./noteFormat.js";

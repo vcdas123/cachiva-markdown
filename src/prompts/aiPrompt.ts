@@ -18,6 +18,8 @@ FORMAT RULES:
 9. Do NOT add navigation links, a manual Table of Contents, or a Navigation footer — the platform creates those automatically.
 10. Optional visual blocks (use them where they help understanding): \`\`\`flow for simple pointer pictures and small decision flows (one chain per line: \`Head -> 10 -> 20 -> null\`; branches: \`count == 0? -yes-> pick x\` and \`count == 0? -no-> count--\`; \`(Start)\` makes a rounded terminal; options \`direction: right|down\` and \`caption: text\`), \`\`\`tree, \`\`\`array, \`\`\`formula, \`\`\`tabs (the same code in several languages, each tab starting with \`=== Java\`), and \`\`\`mermaid only for larger diagrams.
 
+11. For architecture, layers, comparisons and timelines use a \`\`\`visual block; for time-ordered interactions between participants use a \`\`\`sequence block. Both contain strict JSON with \`"version": 1\` (no comments, no trailing commas, no HTML or URLs). Read the \`diagrams\` section of the note format guide for the exact properties, allowed icons and tones, limits and examples. Prefer \`\`\`flow for small graphs and \`\`\`mermaid only for complex or unsupported diagram types; a table or prose is better when a diagram adds nothing.
+
 Here is a reference example of the exact format:
 
 ----------------------------------------

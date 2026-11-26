@@ -54,6 +54,10 @@ Consumers must install the same version: bump `@cachiva/markdown` in both `cachi
 
 Publishing: bump `version` in `package.json`, then `npm publish` (the `prepublishOnly` script builds `dist/` first; `publishConfig.access` is `public`, and npm asks for a one-time 2FA code).
 
+## Diagram blocks (`visual`, `sequence`)
+
+Two strict-JSON fenced blocks are parsed and validated here and drawn natively by the frontend: `visual` (architecture, layers, comparisons, timelines) and `sequence` (messages between participants). The public API is `parseVisualBlock` / `parseSequenceBlock` (each returns `{ ok: true, document }` or `{ ok: false, issues }` with a property path per issue), `formatIssue`, the canonical `VISUAL_EXAMPLES` / `SEQUENCE_EXAMPLES` and the editor templates `VISUAL_TEMPLATE` / `SEQUENCE_TEMPLATE`. They are registered with the study blocks, so `validateMarkdown` and `getMarkdownDiagnostics` check them, and `NOTE_FORMAT_GUIDE.diagrams` teaches AI agents the format. The specifications live in `docs/visual-format.md`, `docs/sequence-format.md` and `docs/diagram-authoring.md`.
+
 ## Build / typecheck
 
 ```bash
