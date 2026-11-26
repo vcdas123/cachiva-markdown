@@ -1,5 +1,8 @@
 import { EXAMPLE_MARKDOWN } from "./exampleMarkdown.js";
+import { DIAGRAM_GUIDE } from "./diagramGuide.js";
 import { MARKDOWN_RULES } from "./markdownRules.js";
+import { SEQUENCE_TEMPLATE } from "../sequence/sequence.examples.js";
+import { VISUAL_TEMPLATE } from "../visual/visual.examples.js";
 import { SUPPORTED_BLOCKS } from "./supportedBlocks.js";
 import { SUPPORTED_DIAGRAM_LANGUAGES } from "./supportedDiagrams.js";
 import { CALLOUT_KINDS, STUDY_BLOCK_LANGUAGES } from "../study/studyBlocks.js";
@@ -10,7 +13,7 @@ import { RESTRUCTURE_PROMPT } from "../prompts/restructurePrompt.js";
 // It is composed from focused constants so authoring prompts, displayed rules,
 // validation guidance, and supported-feature metadata cannot drift.
 export const NOTE_FORMAT_GUIDE = {
-  version: "1.2",
+  version: "1.3",
   summary: "How to author a Markdown (.md) note this platform can parse correctly.",
   rules: MARKDOWN_RULES,
   structure: {
@@ -28,8 +31,12 @@ export const NOTE_FORMAT_GUIDE = {
     formula: "```formula\nT(n) = 2T(n/2) + n\n```",
     tabs: "```tabs\n=== Java\nint x = 1;\n=== Python\nx = 1\n```",
     reference: "[Event Loop](cachiva://note/<noteId>)  [Node.js](cachiva://module/<moduleId>)  [Two Sum](cachiva://question/12)",
+    visual: `\`\`\`visual\n${VISUAL_TEMPLATE}\n\`\`\``,
+    sequence: `\`\`\`sequence\n${SEQUENCE_TEMPLATE}\n\`\`\``,
     practice: "```practice\n[Two Sum](cachiva://question/12)\ncachiva://question/34\n```",
   },
+  // Full specification of the JSON diagram blocks (`visual`, `sequence`) and when to pick each format.
+  diagrams: DIAGRAM_GUIDE,
   // What a note must not contain (each is rejected or stripped by the parser).
   not_allowed: [
     "More than one '# ' heading, or a note that does not start with the '# Title' line",

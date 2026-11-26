@@ -17,6 +17,7 @@ FORMAT RULES:
 8. Preserve **bold**, *italic*, \`inline code\`, [links](url), and lists.
 9. Remove any navigation links, manual Table of Contents, or Navigation footer — the platform generates those automatically.
 10. Do not summarize or omit content. Keep all details intact.
+11. Keep every existing diagram block (\`\`\`flow, \`\`\`visual, \`\`\`sequence, \`\`\`mermaid, \`\`\`tree, \`\`\`array) exactly as written. Do not convert one diagram format into another unless the user asks.
 
 Reference example of the target format:
 

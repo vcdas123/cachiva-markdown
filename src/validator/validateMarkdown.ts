@@ -2,6 +2,7 @@ import { type MarkdownToken, parseMarkdownSource } from "../parser/markdownIt.js
 import type { MarkdownValidationResult } from "../types/diagnostic.js";
 import { CODE_FENCE_ERROR, HEADING_DEPTH_ERROR, PREAMBLE_ERROR } from "../constants/authoringRules.js";
 import { studyBlockProblems } from "../study/studyBlocks.js";
+import { diagramNoteProblems } from "../diagram/aggregate.js";
 
 // Copied verbatim from cachiva-backend/src/utils/markdownValidator.ts —
 // Phase 3 of the shared Markdown package migration. `tokens` is accepted for
@@ -72,6 +73,10 @@ export function validateMarkdownSource(
   for (const token of _tokens) {
     if (token.type !== "fence") continue;
     for (const problem of studyBlockProblems(token.info.trim(), token.content)) errors.push(problem);
+  }
+  {
+    const fences = _tokens.filter((token) => token.type === "fence").map((token) => ({ language: token.info.trim(), value: token.content }));
+    for (const problem of diagramNoteProblems(fences)) errors.push(problem);
   }
 
   if (h1Lines.length > 1) {

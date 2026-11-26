@@ -1,6 +1,7 @@
 import { CODE_FENCE_ERROR, HEADING_DEPTH_ERROR, PREAMBLE_ERROR } from "../constants/authoringRules.js";
 import { parseMarkdownSource } from "../parser/markdownIt.js";
 import { studyBlockProblems } from "../study/studyBlocks.js";
+import { diagramNoteProblems } from "../diagram/aggregate.js";
 
 export interface MarkdownDiagnosticItem {
   message: string;
@@ -109,6 +110,12 @@ export function getMarkdownDiagnostics(raw: string): MarkdownDiagnosticItem[] {
     for (const problem of studyBlockProblems(token.info.trim(), token.content)) {
       diagnostics.push({ message: problem, severity: "error", line: (token.map?.[0] ?? 0) + 1 });
     }
+  }
+
+  // Whole-note diagram budget: reported on the first diagram fence, since no single block is at fault.
+  const diagramFences = tokens.filter((token) => token.type === "fence" && ["visual", "sequence"].includes(token.info.trim()));
+  for (const problem of diagramNoteProblems(diagramFences.map((token) => ({ language: token.info.trim(), value: token.content })))) {
+    diagnostics.push({ message: problem, severity: "error", line: (diagramFences[0]?.map?.[0] ?? 0) + 1 });
   }
 
   if (h1LineIndexes.length > 1) {

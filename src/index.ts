@@ -18,6 +18,10 @@ export * from "./references/index.js";
 export * from "./authoring/index.js";
 // Study-note blocks (tree/array/formula/tabs/practice fences, callouts) and their helpers.
 export * from "./study/index.js";
+// JSON diagram blocks (`visual`, `sequence`): schemas, parsers, limits and canonical examples.
+export * from "./diagram/index.js";
+export * from "./visual/index.js";
+export * from "./sequence/index.js";
 // Deterministic repairs for the validation errors that have exactly one
 // correct outcome. Shared so every editor offers the same fixes.
 export * from "./autofix/index.js";
