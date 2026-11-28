@@ -1,4 +1,6 @@
 import { EXAMPLE_MARKDOWN } from "../constants/exampleMarkdown.js";
+import { DIAGRAM_CHOICE_SUMMARY } from "../constants/diagramChoice.js";
+import { DIAGRAM_SPEC_TEXT } from "../constants/diagramGuide.js";
 import { CODE_FENCE_RULE, MARKDOWN_VALIDATION_NOTICE } from "../constants/authoringRules.js";
 
 export const RESTRUCTURE_PROMPT = `You are a technical documentation formatter. I will give you an EXISTING note. Rewrite it WITHOUT changing, adding, or removing any actual information — only restructure it.
@@ -17,7 +19,7 @@ FORMAT RULES:
 8. Preserve **bold**, *italic*, \`inline code\`, [links](url), and lists.
 9. Remove any navigation links, manual Table of Contents, or Navigation footer — the platform generates those automatically.
 10. Do not summarize or omit content. Keep all details intact.
-11. Keep every existing diagram block (\`\`\`flow, \`\`\`visual, \`\`\`sequence, \`\`\`mermaid, \`\`\`tree, \`\`\`array) exactly as written. Do not convert one diagram format into another unless the user asks.
+11. Keep every existing diagram block (\`\`\`flow, \`\`\`visual, \`\`\`sequence, \`\`\`mermaid, \`\`\`tree, \`\`\`array) exactly as written. Do not convert one diagram format into another unless the user asks.\n12. If you add a NEW diagram while restructuring, choose its format like this: ${DIAGRAM_CHOICE_SUMMARY}\n\n${DIAGRAM_SPEC_TEXT}
 
 Reference example of the target format:
 
