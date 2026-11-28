@@ -14,5 +14,5 @@ export const MARKDOWN_RULES = [
   "Link to other Cachiva content with internal references: [Title](cachiva://module/<moduleId>), [Title](cachiva://note/<noteId>) or [Title](cachiva://question/<questionId>). Look the ids up first; a reference that does not resolve is rejected, so never invent an id and never use the web app's page URL for Cachiva content.",
   "Use the visual blocks when they teach better than prose: ```flow (pointer pictures and small decision flows), ```tree, ```array, ```formula, ```tabs (one tab per language or approach), ```practice (linked practice questions), ```mermaid (larger diagrams) and callouts ('> [!NOTE]', TIP, IMPORTANT, WARNING).",
   `${DIAGRAM_CHOICE_SUMMARY}\n${DIAGRAM_SPEC_TEXT}`,
-  "Do NOT include manual navigation lines, a manual 'Table of Contents', or a '## Navigation' footer. The platform generates navigation automatically.",
+  "Do NOT include manual navigation lines, a manual 'Table of Contents', or a '## Navigation' footer. The platform generates navigation automatically. Do not write 'previous note', 'next note', 'see the next lesson' or similar sequence pointers inside the note body, because the reader already shows Previous and Next buttons at the bottom. Linking to a specific other note or module (inside or outside this module) with a cachiva:// reference is fine when it helps the reader.",
 ] as const;
