@@ -1,3 +1,4 @@
+import { DIAGRAM_CHOICE_RULES, DIAGRAM_EXAMPLES } from "./diagramChoice.js";
 import { DIAGRAM_NOTE_LIMITS } from "../diagram/aggregate.js";
 import { DIAGRAM_MAX_SOURCE_BYTES } from "../diagram/validation.js";
 import {
@@ -26,13 +27,8 @@ import { VISUAL_EXAMPLES } from "../visual/visual.examples.js";
 // the guide cannot promise anything the validator would reject. Kept compact: it is returned by the MCP guide tool.
 
 export const DIAGRAM_GUIDE = {
-  choose_a_format: [
-    "visual: architecture, nested containers, layers, comparisons, conceptual layouts and timelines (cards, grids, arrows between neighbours).",
-    "sequence: time-ordered messages between participants (requests, responses, activations, alt/opt/loop/par groups).",
-    "flow: a small graph or decision flow, one chain per line. mermaid: complex graphs and diagram types not covered natively (state, ER, gantt...).",
-    "tree: tree data structures. array: indexed values. Use a table or plain prose when a diagram would not make it clearer.",
-    "Never convert an existing diagram block to another format unless the user asks.",
-  ],
+  choose_a_format: DIAGRAM_CHOICE_RULES,
+  examples: DIAGRAM_EXAMPLES,
   visual: {
     fence: "visual",
     document: `{ "version": ${VISUAL_VERSION}, "title"?: string, "caption"?: string, "root": node }`,
@@ -100,3 +96,23 @@ export const DIAGRAM_GUIDE = {
     limits: { block_kib: DIAGRAM_MAX_SOURCE_BYTES / 1024, ...DIAGRAM_NOTE_LIMITS },
   },
 } as const;
+
+const compactJson = (source: string): string => JSON.stringify(JSON.parse(source));
+
+/**
+ * The whole diagram specification as plain text, for readers who only have a copied prompt or rule list and cannot read the
+ * structured `diagrams` section (a person pasting the rules into any AI chat). Built from the same constants as the guide.
+ */
+export const DIAGRAM_SPEC_TEXT = [
+  "Diagram blocks. When you write one, follow this.",
+  `- ${DIAGRAM_GUIDE.choose_a_format[0]}`,
+  ...DIAGRAM_GUIDE.choose_a_format.slice(1).map((rule) => `- ${rule}`),
+  `visual block: strict JSON ${DIAGRAM_GUIDE.visual.document}. Nodes: ${Object.entries(DIAGRAM_GUIDE.visual.nodes)
+    .map(([name, shape]) => `${name} (${shape})`)
+    .join("; ")}. tone: ${DIAGRAM_GUIDE.visual.values.tone.join("|")}; gap: ${DIAGRAM_GUIDE.visual.values.gap.join("|")}; align: ${DIAGRAM_GUIDE.visual.values.align.join("|")}; icons: ${DIAGRAM_GUIDE.visual.values.icon.join(", ")}. Limits: ${JSON.stringify(DIAGRAM_GUIDE.visual.limits)}. Example: ${compactJson(DIAGRAM_GUIDE.visual.example)}`,
+  `sequence block: strict JSON ${DIAGRAM_GUIDE.sequence.document}. Events: ${Object.entries(DIAGRAM_GUIDE.sequence.events)
+    .map(([name, shape]) => `${name} (${shape})`)
+    .join("; ")}. ${DIAGRAM_GUIDE.sequence.rules.join(" ")} Limits: ${JSON.stringify(DIAGRAM_GUIDE.sequence.limits)}. Example: ${compactJson(DIAGRAM_GUIDE.sequence.example)}`,
+  `Both JSON blocks: ${DIAGRAM_GUIDE.both_formats.syntax}. Not allowed: ${DIAGRAM_GUIDE.both_formats.not_allowed}.`,
+  `Ready-made flow example:\n${DIAGRAM_EXAMPLES.simple_flow}\nReady-made decision flowchart (mermaid):\n${DIAGRAM_EXAMPLES.decision_flowchart}\nReady-made step pipeline (mermaid):\n${DIAGRAM_EXAMPLES.step_pipeline}`,
+].join("\n");
